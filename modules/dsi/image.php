@@ -48,7 +48,7 @@ function exec_ogp_module(){
 	if(!$s){ dsi_error_img(false, "No or incomplete server address given!", $img_type); }
 	/* Cache handler */
 	$cache = array();
-	$cache["life"] = 60;
+	$cache["life"] = 1;
 	$cache["file"] = DSI_BASEPATH."cache/".$s[0]."_".$s[1]."-".$img_type;
 	if( file_exists( $cache["file"] ) )
 	{
@@ -98,7 +98,7 @@ function exec_ogp_module(){
 		}
 		
 		if (file_exists(DSI_BASEPATH."geoip.inc.php")){
-			$geoip = false;
+			$geoip = true;
 			require_once DSI_BASEPATH."geoip.inc.php";
 			$gi = geoip_open( DSI_BASEPATH."GeoIP.dat", GEOIP_STANDARD );
 			$clookup = geoip_country_code_by_addr($gi, $s[0]);
@@ -111,7 +111,7 @@ function exec_ogp_module(){
 		}
 		
 		$icon_paths = array("images/icons/$mod.png",
-							"images/icons/$query_name.png",								
+							"images/icons/$query_name.png",
 							"images/countries/noflag.png"); 
 		$icoimg = get_first_existing_file($icon_paths);
 		$icoimage_info = getimagesize($icoimg);
@@ -129,14 +129,14 @@ function exec_ogp_module(){
 		
 		/* Text formatting */
 		$text_font0 = DSI_BASEPATH."fonts/Cyberbas.ttf";
-		$size0 = 10; /* Normal */
-		$size2 = 9; /* Small */
+		$size0 = 11.5; /* Normal */
+		$size2 = 10; /* Small */
 		$size4 = 10; /* Sky */
 
 		$text_font1 = DSI_BASEPATH."fonts/Sansation_Regular.ttf";
-		$size1 = 10; /* Normal */
+		$size1 = 12; /* Normal */
 		$size3 = 10; /* Small */
-		$size5 = 9; /* Sky */
+		$size5 = 10; /* Sky */
 		
 		$name_type_vertical = false; /* Display the hostname vertically on sky image */
 				
@@ -146,14 +146,59 @@ function exec_ogp_module(){
 
 		if($status == "offline")
 		{
-			$text_color0 = ImageColorAllocate($im,125,125,125);
-			$text_color1 = ImageColorAllocate($im,125,125,125);
+			$text_color_servername = ImageColorAllocate($im,255,255,255);
+			$text_color_ipport = ImageColorAllocate($im,255,255,255);
+			$text_color_map = ImageColorAllocate($im,255,255,255);
+			$text_color_players = ImageColorAllocate($im,255,255,255);
+			$text_color_status = ImageColorAllocate($im,255,0,0);
+			$text_color_statustext = ImageColorAllocate($im,255,255,255);
 		}
-		else
-		{
-			$text_color0 = ImageColorAllocate($im,0,255,0);
-			$text_color1 = ImageColorAllocate($im,0,255,0);
+	else
+	{
+		if ($mod == "redorchestra2") {
+			$text_color_servername = ImageColorAllocate($im,255,230,0);
+			$text_color_ipport = ImageColorAllocate($im,255,255,255);
+			$text_color_map = ImageColorAllocate($im,255,255,255);
+			$text_color_players = ImageColorAllocate($im,255,255,255);
+			$text_color_status = ImageColorAllocate($im,0,255,0);
+			$text_color_statustext = ImageColorAllocate($im,255,255,255);
+		} elseif ($mod == "killingfloor2") {
+			$text_color_servername = ImageColorAllocate($im,150,255,100);
+			$text_color_ipport = ImageColorAllocate($im,255,255,255);
+			$text_color_map = ImageColorAllocate($im,255,255,255);
+			$text_color_players = ImageColorAllocate($im,255,255,255);
+			$text_color_status = ImageColorAllocate($im,0,255,0);
+			$text_color_statustext = ImageColorAllocate($im,255,255,255);
+		} elseif ($mod == "sandstorm") {
+			$text_color_servername = ImageColorAllocate($im,255,230,0);
+			$text_color_ipport = ImageColorAllocate($im,255,255,255);
+			$text_color_map = ImageColorAllocate($im,255,255,255);
+			$text_color_players = ImageColorAllocate($im,255,255,255);
+			$text_color_status = ImageColorAllocate($im,0,255,0);
+			$text_color_statustext = ImageColorAllocate($im,255,255,255);
+		} elseif ($mod == "risingstorm2") {
+			$text_color_servername = ImageColorAllocate($im,255,200,0);
+			$text_color_ipport = ImageColorAllocate($im,255,255,255);
+			$text_color_map = ImageColorAllocate($im,255,255,255);
+			$text_color_players = ImageColorAllocate($im,255,255,255);
+			$text_color_status = ImageColorAllocate($im,0,255,0);
+			$text_color_statustext = ImageColorAllocate($im,255,255,255);
+		} elseif ($mod == "miscreateddedicatedserver") {
+			$text_color_servername = ImageColorAllocate($im,255,125,0);
+			$text_color_ipport = ImageColorAllocate($im,255,255,255);
+			$text_color_map = ImageColorAllocate($im,255,255,255);
+			$text_color_players = ImageColorAllocate($im,255,255,255);
+			$text_color_status = ImageColorAllocate($im,0,255,0);
+			$text_color_statustext = ImageColorAllocate($im,255,255,255);
+		} else{
+			$text_color_servername = ImageColorAllocate($im,255,255,255);
+			$text_color_ipport = ImageColorAllocate($im,255,255,255);
+			$text_color_map = ImageColorAllocate($im,255,255,255);
+			$text_color_players = ImageColorAllocate($im,255,255,255);
+			$text_color_status = ImageColorAllocate($im,0,255,0);
+			$text_color_statustext = ImageColorAllocate($im,255,255,255);
 		}
+	}
 		if ( ! isset( $txt_outline ) ){
 			switch($img_type){
 				case "normal":
@@ -171,23 +216,23 @@ function exec_ogp_module(){
 		/* Render types */
 		switch($img_type){
 			case "normal":
-				if($geoip){ imagecopyresampled($im, $cimage, 205, 35, 0, 0, 16, 11, $cimage_info[0], $cimage_info[1]); } // Country
-				imagecopyresampled($im, $icoimage, 5, 5, 0, 0, 16, 16, $icoimage_info[0], $icoimage_info[1]); // Gameicon
-				pretty_text_ttf($im,$size0,0,25,18,$text_color0,$text_font0,substr($name,0,47), $txt_outline); // Servername
-				pretty_text_ttf($im,$size1,0,65,45,$text_color0,$text_font1,$ip.":".$port, $txt_outline); // IP:PORT
-				pretty_text_ttf($im,$size1,0,65,63,$text_color0,$text_font1,$map, $txt_outline); // Map
-				pretty_text_ttf($im,$size1,0,292,45,$text_color0,$text_font1,$players."/".$playersmax, $txt_outline); // Players
-				pretty_text_ttf($im,$size1,0,293,63,$text_color0,$text_font1,$status, $txt_outline); // Status
+				if($geoip){ imagecopyresampled($im, $cimage, 240, 35, 0, 0, 16, 11, $cimage_info[0], $cimage_info[1]); } // Country
+				imagecopyresampled($im, $icoimage, 16, 32, 0, 0, 32, 32, $icoimage_info[0], $icoimage_info[1]); // Gameicon
+				pretty_text_ttf($im,$size0,0,8,18,$text_color_servername,$text_font0,substr($name,0,48), $txt_outline); // Servername
+				pretty_text_ttf($im,$size1,0,65,45,$text_color_ipport,$text_font1,$ip.":".$port, $txt_outline); // IP:PORT
+				pretty_text_ttf($im,$size1,0,65,63,$text_color_map,$text_font1,substr($mapRaw,0,25), $txt_outline); // Map
+				pretty_text_ttf($im,$size1,0,295,45,$text_color_players,$text_font1,$players."/".$playersmax, $txt_outline); // Players
+				pretty_text_ttf($im,$size1,0,290,63,$text_color_status,$text_font1,$status, $txt_outline); // Status
 			break;
 			
 			case "small":
-				if($geoip){ imagecopyresampled($im, $cimage, 315, 1, 0, 0, 16, 11, $cimage_info[0], $cimage_info[1]); } // Country
-				imagecopyresampled($im, $icoimage, 0, 0, 0, 0, 16, 16, $icoimage_info[0], $icoimage_info[1]); // Gameicon
-				pretty_text_ttf($im,$size2,0,18,10,$text_color0,$text_font0,substr($name,0,45), $txt_outline); // Servername
-				pretty_text_ttf($im,$size3,0,2,24,$text_color0,$text_font1,$ip.":".$port, $txt_outline); // IP:Port
-				pretty_text_ttf($im,$size3,0,135,24,$text_color0,$text_font1,$map, $txt_outline); // Map
-				pretty_text_ttf($im,$size3,0,240,24,$text_color0,$text_font1,$players."/".$playersmax, $txt_outline); // Players
-				pretty_text_ttf($im,$size3,0,295,24,$text_color0,$text_font1,$status, $txt_outline); // Status
+				if($geoip){ imagecopyresampled($im, $cimage, 335, 1, 0, 0, 16, 11, $cimage_info[0], $cimage_info[1]); } // Country
+				imagecopyresampled($im, $icoimage, 0, 0, 0, 0, 25, 25, $icoimage_info[0], $icoimage_info[1]); // Gameicon
+				pretty_text_ttf($im,$size2,0,28,10,$text_color_servername,$text_font0,substr($name,0,48), $txt_outline); // Servername
+				pretty_text_ttf($im,$size3,0,28,24,$text_color_ipport,$text_font1,$ip.":".$port, $txt_outline); // IP:PORT
+				pretty_text_ttf($im,$size3,0,165,24,$text_color_map,$text_font1,substr($mapRaw,0,16), $txt_outline); // Map
+				pretty_text_ttf($im,$size3,0,280,24,$text_color_players,$text_font1,$players."/".$playersmax, $txt_outline); // Players
+				pretty_text_ttf($im,$size3,0,316,24,$text_color_status,$text_font1,$status, $txt_outline); // Status
 			break;
 			
 			case "sky":
@@ -214,25 +259,30 @@ function exec_ogp_module(){
 				if ($im_map_info[2] == 2) { $im_map = imagecreatefromjpeg($img_map); }
 				if ($im_map_info[2] == 3) { $im_map = imagecreatefrompng($img_map);  }
 			
-				$im_map_width  = 130;
+				$im_map_width  = 160;
 				$im_map_height = 120;
-				$im_map_posx   = 25;
-				$im_map_posy   = 120;
+				$im_map_posx   = 10;
+				$im_map_posy   = 125;
 
-				$im_icon_width  = 16;
-				$im_icon_height = 16;
-				$im_icon_posx   = 26;
-				$im_icon_posy   = 113;
+				$im_icon_width  = 32;
+				$im_icon_height = 32;
+				$im_icon_posx   = 12;
+				$im_icon_posy   = 127;
 
 				imagecopyresampled($im, $im_map, $im_map_posx, $im_map_posy, 0, 0, $im_map_width, $im_map_height, $im_map_info[0], $im_map_info[1]); // Mapimage
 				imagecopyresampled($im, $icoimage, $im_icon_posx, $im_icon_posy, 0, 0, $im_icon_width, $im_icon_height, $icoimage_info[0], $icoimage_info[1]); // Gameicon
-				if($geoip){ imagecopyresampled($im, $cimage, $im_icon_posx + 112, $im_icon_posy, 0, 0, 16, 11, $cimage_info[0], $cimage_info[1]); } // Country
-				if($name_type_vertical){ pretty_text_ttf($im,$size4,270,5,20,$text_color1,$text_font0,substr($name,0,28), $txt_outline); } // Servername Vertical
-				else{ pretty_text_ttf($im,$size4,0,5,15,$text_color1,$text_font0,substr($name,0,23), $txt_outline); } // Servername
-				pretty_text_ttf($im,$size5,0,20,30,$text_color1,$text_font1,"IP:Port:  ".$ip.":".$port, $txt_outline); // IP:Port
-				pretty_text_ttf($im,$size5,0,20,52,$text_color1,$text_font1,"Map    :  ".substr($map,0,19), $txt_outline); // Map
-				pretty_text_ttf($im,$size5,0,20,74,$text_color1,$text_font1,"Players:  ".$players."/".$playersmax, $txt_outline); // Players
-				pretty_text_ttf($im,$size5,0,20,96,$text_color1,$text_font1,"Status :  ".substr($status,0,19), $txt_outline); // Status
+				if($geoip){ imagecopyresampled($im, $cimage, $im_icon_posx + 140, $im_icon_posy, 0, 0, 16, 11, $cimage_info[0], $cimage_info[1]); } // Country
+				if($name_type_vertical){ pretty_text_ttf($im,$size4,270,5,20,$text_color_servername,$text_font0,substr($name,0,25), $txt_outline); } // Servername Vertical
+				else{ pretty_text_ttf($im,$size4,0,5,20,$text_color_servername,$text_font0,substr($name,0,25), $txt_outline); } // Servername
+				pretty_text_ttf($im,$size5,0,20,50,$text_color_ipport,$text_font1,"IP  :  ".$ip.":".$port, $txt_outline); // IP:Port
+				pretty_text_ttf($im,$size5,0,20,70,$text_color_map,$text_font1,"Map  :  ".substr($mapRaw,0,18), $txt_outline); // Map
+				pretty_text_ttf($im,$size5,0,20,90,$text_color_players,$text_font1,"Players  :  ".$players."/".$playersmax, $txt_outline); // Players
+				pretty_text_ttf($im,$size5,0,20,110,$text_color_status,$text_font1,"Status  :  ", $txt_outline); // Status text
+				pretty_text_ttf($im,$size5,0,75,110,$text_color_status,$text_font1,$status, $txt_outline); // Status
+				pretty_text_ttf($im,$size5,0,20,130,$text_color_statustext,$text_font1,$xx2, $txt_outline); // 2
+				pretty_text_ttf($im,$size5,0,20,150,$text_color_statustext,$text_font1,$password, $txt_outline); // 3
+				pretty_text_ttf($im,$size5,0,20,170,$text_color_statustext,$text_font1,$xx4, $txt_outline); // 4
+				pretty_text_ttf($im,$size5,0,20,190,$text_color_statustext,$text_font1,$xx5, $txt_outline); // 5
 			break;
 		}
 		dsi_make_img($im, false, $cache);

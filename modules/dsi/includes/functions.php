@@ -126,6 +126,13 @@ function pretty_text_ttf($im, $fontsize, $angle, $x, $y, $color, $font, $string,
 		imagettftext($im, $fontsize, $angle, $x + 1, $y - 1, $black, $font, $string);
 		imagettftext($im, $fontsize, $angle, $x + 1, $y, $black, $font, $string);
 		imagettftext($im, $fontsize, $angle, $x + 1, $y + 1, $black, $font, $string);
+		imagettftext($im, $fontsize, $angle, $x - 1.5, $y, $black, $font, $string);
+		imagettftext($im, $fontsize, $angle, $x - 1.5, $y + 1.5, $black, $font, $string);
+		imagettftext($im, $fontsize, $angle, $x, $y - 1.5, $black, $font, $string);
+		imagettftext($im, $fontsize, $angle, $x, $y + 1.5, $black, $font, $string);
+		imagettftext($im, $fontsize, $angle, $x + 1.5, $y - 1.5, $black, $font, $string);
+		imagettftext($im, $fontsize, $angle, $x + 1.5, $y, $black, $font, $string);
+		imagettftext($im, $fontsize, $angle, $x + 1.5, $y + 1.5, $black, $font, $string);
 	}
 
 	// Your text
